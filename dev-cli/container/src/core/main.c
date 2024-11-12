@@ -13,6 +13,7 @@
 #endif
 
 #include "vlad_rusty_lib.h"
+#include "didkit.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -48,6 +49,22 @@ extern "C"
       
       // Push the result back onto the Lua stack
       lua_pushinteger(L, result);
+      
+      // Return the number of results
+      return 1;
+  }
+
+      // Define a wrapper function to call didkit_vc_verify_credential from Lua
+  int lua_verify_credential(lua_State* L) {
+      // Get input arguments from the Lua stack
+      const char *credential = luaL_checkstring(L, 1);
+      const char *proof_options_json = luaL_checkstring(L, 2);
+      
+      // Call the Rust function
+      const char *result = didkit_vc_verify_credential(credential, proof_options_json);
+      
+      // Push the result back onto the Lua stack
+      lua_pushstring(L, result);
       
       // Return the number of results
       return 1;
@@ -190,6 +207,7 @@ extern "C"
     // VLAD: Register our custom C functions with Lua
     lua_register(wasm_lua_state, "add_two_integers", lua_add_two_integers);
     lua_register(wasm_lua_state, "subtract_two_integers", lua_subtract_two_integers);
+    lua_register(wasm_lua_state, "verify_credential", lua_verify_credential);
 
     if (docall(L, 1, LUA_MULTRET))
     {

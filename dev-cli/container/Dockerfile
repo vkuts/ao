@@ -111,10 +111,10 @@ ENV CC='emcc -s WASM=1'
 ENV NM='/emsdk/upstream/bin/llvm-nm'
 
 # VLAD: adding Rust compilation tools (rustup + cargo WASM32 targets)
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-RUN ~/.cargo/bin/rustup target add wasm32-unknown-unknown
+# RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+# RUN ~/.cargo/bin/rustup target add wasm32-unknown-unknown
 # VLAD: compiling a custom Rust library to WASM32 target
-RUN cd /opt/vlad_rusty && ~/.cargo/bin/cargo build --target=wasm32-unknown-unknown --release
+# RUN cd /opt/vlad_rusty && ~/.cargo/bin/cargo build --target=wasm32-unknown-unknown --release
 
 ###########################################
 ### Publish, Bundler, Process, Contract ###
