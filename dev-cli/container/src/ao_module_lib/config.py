@@ -47,7 +47,7 @@ class Config():
     maximum_memory = 0
     extra_compile_args = []
     keep_js = False
-    target = 32
+    target = 64
 
     def __init__(self, config_file):
         
