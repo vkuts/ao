@@ -62,8 +62,7 @@ extern "C"
     const char *result = get_ohai();
     
     // Push the result back onto the Lua stack
-    // lua_pushstring(L, result);
-    lua_pushlstring(L, result, sizeof(result));
+    lua_pushstring(L, result);
     
     // Return the number of results
     return 1;
