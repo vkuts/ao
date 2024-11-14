@@ -100,7 +100,7 @@ def main():
     debug_print('Start to compile as WASM')
 
     # Setup the compile command
-    cmd = ['emcc', '-O3', 
+    cmd = ['emcc', '-O3',
       '-g2',
     #   '-s', 'MAIN_MODULE', # This is required to load dynamic libraries at runtime
       '-s', 'ASYNCIFY=1',
@@ -132,7 +132,7 @@ def main():
     cmd.extend(['-I', quote('/opt')])
     cmd.extend(['-L/opt', '-l:libvlad_rusty.a'])
     # cmd.extend(['-L/opt/vlad_rusty/target/wasm32-unknown-unknown/release', '-l:libvlad_rusty.a'])
-    cmd.extend(['-L/opt', '-l:libdidkit.a'])
+    # cmd.extend(['-L/opt', '-l:libdidkit_wasm.a'])
     
 
     # Link Rust library
