@@ -13,7 +13,7 @@
 #endif
 
 #include "vlad_rusty_lib.h"
-#include "didkit.h"
+// #include "didkit_wasm.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -25,50 +25,79 @@ extern "C"
 
   // Define a wrapper function to call add_two_integers from Lua
   int lua_add_two_integers(lua_State* L) {
-      // Get the two integer arguments from the Lua stack
-      int a = luaL_checkinteger(L, 1);
-      int b = luaL_checkinteger(L, 2);
-      
-      // Call the Rust function
-      int result = add_two_integers(a, b);
-      
-      // Push the result back onto the Lua stack
-      lua_pushinteger(L, result);
-      
-      // Return the number of results
-      return 1;
-  }
-    // Define a wrapper function to call subtract_two_integers from Lua
-  int lua_subtract_two_integers(lua_State* L) {
-      // Get the two integer arguments from the Lua stack
-      int a = luaL_checkinteger(L, 1);
-      int b = luaL_checkinteger(L, 2);
-      
-      // Call the Rust function
-      int result = subtract_two_integers(a, b);
-      
-      // Push the result back onto the Lua stack
-      lua_pushinteger(L, result);
-      
-      // Return the number of results
-      return 1;
+    // Get the two integer arguments from the Lua stack
+    int a = luaL_checkinteger(L, 1);
+    int b = luaL_checkinteger(L, 2);
+    
+    // Call the Rust function
+    int result = add_two_integers(a, b);
+    
+    // Push the result back onto the Lua stack
+    lua_pushinteger(L, result);
+    
+    // Return the number of results
+    return 1;
   }
 
-      // Define a wrapper function to call didkit_vc_verify_credential from Lua
-  int lua_verify_credential(lua_State* L) {
-      // Get input arguments from the Lua stack
-      const char *credential = luaL_checkstring(L, 1);
-      const char *proof_options_json = luaL_checkstring(L, 2);
-      
-      // Call the Rust function
-      const char *result = didkit_vc_verify_credential(credential, proof_options_json);
-      
-      // Push the result back onto the Lua stack
-      lua_pushstring(L, result);
-      
-      // Return the number of results
-      return 1;
+
+  int lua_subtract_two_integers(lua_State* L) {
+    // Get the two integer arguments from the Lua stack
+    int a = luaL_checkinteger(L, 1);
+    int b = luaL_checkinteger(L, 2);
+    
+    // Call the Rust function
+    int result = subtract_two_integers(a, b);
+    
+    // Push the result back onto the Lua stack
+    lua_pushinteger(L, result);
+    
+    // Return the number of results
+    return 1;
   }
+
+
+  // Define a wrapper function to call subtract_two_integers from Lua
+  int lua_get_ohai(lua_State* L) {
+    // Call the Rust function
+    const char *result = get_ohai();
+    
+    // Push the result back onto the Lua stack
+    // lua_pushstring(L, result);
+    lua_pushlstring(L, result, sizeof(result));
+    
+    // Return the number of results
+    return 1;
+  }
+
+  int lua_say_hi(lua_State* L) {
+    // Get the two integer arguments from the Lua stack
+    const char *a = luaL_checkstring(L, 1); // lua_tostring
+    
+    // Call the Rust function
+    const char *result = say_hi(a);
+    
+    // Push the result back onto the Lua stack
+    lua_pushstring(L, result);
+    
+    // Return the number of results
+    return 1;
+  }
+
+  // Define a wrapper function to call didkit_vc_verify_credential from Lua
+  // int lua_verify_credential(lua_State* L) {
+  //     // Get input arguments from the Lua stack
+  //     const char *credential = luaL_checkstring(L, 1);
+  //     const char *proof_options_json = luaL_checkstring(L, 2);
+      
+  //     // Call the Rust function
+  //     const char *result = verify_credential(credential, proof_options_json);
+      
+  //     // Push the result back onto the Lua stack
+  //     lua_pushstring(L, result);
+      
+  //     // Return the number of results
+  //     return 1;
+  // }
 
   // Pre-compiled lua loader program
   static const unsigned char program[] = {__LUA_BASE__};
@@ -207,7 +236,9 @@ extern "C"
     // VLAD: Register our custom C functions with Lua
     lua_register(wasm_lua_state, "add_two_integers", lua_add_two_integers);
     lua_register(wasm_lua_state, "subtract_two_integers", lua_subtract_two_integers);
-    lua_register(wasm_lua_state, "verify_credential", lua_verify_credential);
+    lua_register(wasm_lua_state, "get_ohai", lua_get_ohai);
+    lua_register(wasm_lua_state, "say_hi", lua_say_hi);
+    // lua_register(wasm_lua_state, "verify_credential", lua_verify_credential);
 
     if (docall(L, 1, LUA_MULTRET))
     {
