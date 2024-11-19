@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <string.h>
 
 #include <emscripten.h>
 
@@ -60,12 +61,28 @@ extern "C"
   int lua_get_ohai(lua_State* L) {
     // Call the Rust function
     const char *result = get_ohai();
-    
+
+    lua_pushliteral(L, "C error calling get_ohai");
+    lua_error(L);
+
+    // size_t result_length = strlen(result);
+    // if (result_length == 0 || result_length == SIZE_MAX) {
+    //   // perror("Error calling get_ohai");
+    //   // luaL_error(L, "Error calling get_ohai: %d", errno);
+    //   lua_pushliteral(L, "C error calling get_ohai");
+    //   lua_error(L);
+    //   return 0;
+    // } else {
+    //   lua_pushstring(L, result);
+    // }
+
     // Push the result back onto the Lua stack
-    lua_pushstring(L, result);
+    // lua_pushstring(L, "bam");
+    // lua_pushinteger(L, 42);
     
     // Return the number of results
-    return 1;
+    return 0;
+    // return 1;
   }
 
   int lua_say_hi(lua_State* L) {
@@ -74,7 +91,8 @@ extern "C"
     
     // Call the Rust function
     const char *result = say_hi(a);
-    
+    // printf ("lua_say_hi result: '%s'\n", result);
+  
     // Push the result back onto the Lua stack
     lua_pushstring(L, result);
     
@@ -99,9 +117,9 @@ extern "C"
   // }
 
   // Pre-compiled lua loader program
-  static const unsigned char program[] = {__LUA_BASE__};
+  static const unsigned char program[] = {__LUA_BASE__}; // VLAD: this gets subbed in with /opt/main.lua
   // Pre-compiled entry script which user wrote
-  static const unsigned char lua_main_program[] = {__LUA_MAIN__};
+  static const unsigned char lua_main_program[] = {__LUA_MAIN__}; // VLAD: this gets subbed in with /opt/loader.lua
 
   // This line will be injected by emcc-lua as export functions to WASM declaration
   __FUNCTION_DECLARATIONS__
