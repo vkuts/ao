@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <string.h>
 
 #include <emscripten.h>
 
@@ -12,6 +13,9 @@
 #include "lauxlib.h"
 #endif
 
+#include "vlad_rusty_lib.h"
+// #include "didkit_wasm.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -20,10 +24,102 @@ extern "C"
   int boot_lua(lua_State *L);
   lua_State *wasm_lua_state = NULL;
 
+  // Define a wrapper function to call add_two_integers from Lua
+  int lua_add_two_integers(lua_State* L) {
+    // Get the two integer arguments from the Lua stack
+    int a = luaL_checkinteger(L, 1);
+    int b = luaL_checkinteger(L, 2);
+    
+    // Call the Rust function
+    int result = add_two_integers(a, b);
+    
+    // Push the result back onto the Lua stack
+    lua_pushinteger(L, result);
+    
+    // Return the number of results
+    return 1;
+  }
+
+
+  int lua_subtract_two_integers(lua_State* L) {
+    // Get the two integer arguments from the Lua stack
+    int a = luaL_checkinteger(L, 1);
+    int b = luaL_checkinteger(L, 2);
+    
+    // Call the Rust function
+    int result = subtract_two_integers(a, b);
+    
+    // Push the result back onto the Lua stack
+    lua_pushinteger(L, result);
+    
+    // Return the number of results
+    return 1;
+  }
+
+
+  // Define a wrapper function to call subtract_two_integers from Lua
+  int lua_get_ohai(lua_State* L) {
+    // Call the Rust function
+    const char *result = get_ohai();
+
+    lua_pushliteral(L, "C error calling get_ohai");
+    lua_error(L);
+
+    // size_t result_length = strlen(result);
+    // if (result_length == 0 || result_length == SIZE_MAX) {
+    //   // perror("Error calling get_ohai");
+    //   // luaL_error(L, "Error calling get_ohai: %d", errno);
+    //   lua_pushliteral(L, "C error calling get_ohai");
+    //   lua_error(L);
+    //   return 0;
+    // } else {
+    //   lua_pushstring(L, result);
+    // }
+
+    // Push the result back onto the Lua stack
+    // lua_pushstring(L, "bam");
+    // lua_pushinteger(L, 42);
+    
+    // Return the number of results
+    return 0;
+    // return 1;
+  }
+
+  int lua_say_hi(lua_State* L) {
+    // Get the two integer arguments from the Lua stack
+    const char *a = luaL_checkstring(L, 1); // lua_tostring
+    
+    // Call the Rust function
+    const char *result = say_hi(a);
+    // printf ("lua_say_hi result: '%s'\n", result);
+  
+    // Push the result back onto the Lua stack
+    lua_pushstring(L, result);
+    
+    // Return the number of results
+    return 1;
+  }
+
+  // Define a wrapper function to call didkit_vc_verify_credential from Lua
+  // int lua_verify_credential(lua_State* L) {
+  //     // Get input arguments from the Lua stack
+  //     const char *credential = luaL_checkstring(L, 1);
+  //     const char *proof_options_json = luaL_checkstring(L, 2);
+      
+  //     // Call the Rust function
+  //     const char *result = verify_credential(credential, proof_options_json);
+      
+  //     // Push the result back onto the Lua stack
+  //     lua_pushstring(L, result);
+      
+  //     // Return the number of results
+  //     return 1;
+  // }
+
   // Pre-compiled lua loader program
-  static const unsigned char program[] = {__LUA_BASE__};
+  static const unsigned char program[] = {__LUA_BASE__}; // VLAD: this gets subbed in with /opt/main.lua
   // Pre-compiled entry script which user wrote
-  static const unsigned char lua_main_program[] = {__LUA_MAIN__};
+  static const unsigned char lua_main_program[] = {__LUA_MAIN__}; // VLAD: this gets subbed in with /opt/loader.lua
 
   // This line will be injected by emcc-lua as export functions to WASM declaration
   __FUNCTION_DECLARATIONS__
@@ -132,6 +228,7 @@ extern "C"
       lua_close(wasm_lua_state);
       return 1;
     }
+
     // printf("Boot Lua Webassembly!\n");
     return 0;
   }
@@ -152,6 +249,13 @@ extern "C"
 
     // This place will be injected by emcc-lua
     __INJECT_LUA_FILES__
+
+    // VLAD: Register our custom C functions with Lua
+    lua_register(wasm_lua_state, "add_two_integers", lua_add_two_integers);
+    lua_register(wasm_lua_state, "subtract_two_integers", lua_subtract_two_integers);
+    lua_register(wasm_lua_state, "get_ohai", lua_get_ohai);
+    lua_register(wasm_lua_state, "say_hi", lua_say_hi);
+    // lua_register(wasm_lua_state, "verify_credential", lua_verify_credential);
 
     if (docall(L, 1, LUA_MULTRET))
     {

@@ -54,9 +54,12 @@ def main():
     
     # Load the config file
     config = Config('/src/config.yml')
+    debug_print('Build config is {}'.format(' '.join(str(config))))
+
 
     # Determine the language of the source files
     language = determine_language()
+    debug_print('Determined the language to be {}'.format(language))
 
     # Read the main.c file into c_program
     c_program = ''
@@ -97,7 +100,7 @@ def main():
     debug_print('Start to compile as WASM')
 
     # Setup the compile command
-    cmd = ['emcc', '-O3', 
+    cmd = ['emcc', '-O3',
       '-g2',
     #   '-s', 'MAIN_MODULE', # This is required to load dynamic libraries at runtime
       '-s', 'ASYNCIFY=1',
@@ -125,6 +128,14 @@ def main():
     else:
         cmd.extend(['-I', quote('/lua-{}-32/src'.format(os.environ.get('LUA_VERSION')))])
         cmd.extend([quote('/lua-{}-32/src/liblua.a'.format(os.environ.get('LUA_VERSION')))])
+
+    cmd.extend(['-I', quote('/opt')])
+    # cmd.extend(['-L/opt', '-l:libvlad_rusty.a'])
+    # cmd.extend(['-L/opt/vlad_rusty/target/wasm32-unknown-unknown/release', '-l:libvlad_rusty.a'])
+    # cmd.extend(['-L/opt/vlad_rusty/target/wasm32-unknown-emscripten/release', '-l:libvlad_rusty.a'])
+    cmd.extend(['-L/opt/vlad_rusty/target/wasm64-unknown-unknown/release', '-l:libvlad_rusty.a'])
+    # cmd.extend(['-L/opt', '-l:libdidkit_wasm.a'])
+    
 
     # Link Rust library
     if(language == 'rust'):
