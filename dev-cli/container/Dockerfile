@@ -111,13 +111,17 @@ ENV CC='emcc -s WASM=1'
 ENV NM='/emsdk/upstream/bin/llvm-nm'
 
 # VLAD: adding Rust compilation tools (rustup + cargo WASM32 targets)
-# RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+RUN ~/.cargo/bin/rustup toolchain install nightly
+RUN ~/.cargo/bin/rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
+
 # RUN ~/.cargo/bin/rustup target add wasm32-unknown-unknown
+# RUN ~/.cargo/bin/rustup target add wasm64-unknown-unknown
 # RUN ~/.cargo/bin/rustup target add wasm32-unknown-emscripten
 # VLAD: compiling a custom Rust library to WASM32 target
 # RUN cd /opt/vlad_rusty && ~/.cargo/bin/cargo build --target=wasm32-unknown-unknown --release
-
 # RUN cd /opt/vlad_rusty && ~/.cargo/bin/cargo build --target=wasm32-unknown-emscripten --release
+RUN cd /opt/vlad_rusty && RUSTFLAGS='--cfg=web_sys_unstable_apis --Z wasm_c_abi=spec' ~/.cargo/bin/cargo +nightly build -Zbuild-std=std,panic_unwind,panic_abort --target=wasm64-unknown-unknown --release
 
 ###########################################
 ### Publish, Bundler, Process, Contract ###

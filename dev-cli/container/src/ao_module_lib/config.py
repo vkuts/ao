@@ -18,7 +18,6 @@ presets = {
         'maximum_memory': mb_to_bytes(256) 
     },
     'md': {
-        'target': 32,
         'stack_size': mb_to_bytes(64),
         'initial_memory': mb_to_bytes(68), 
         'maximum_memory': mb_to_bytes(512)
@@ -47,7 +46,7 @@ class Config():
     maximum_memory = 0
     extra_compile_args = []
     keep_js = False
-    target = 32
+    target = 64
 
     def __init__(self, config_file):
         
@@ -98,6 +97,3 @@ class Config():
             args.extend(['{}'.format(val)])
         debug_print('Extra compile args: {}'.format(args))
         return args
-    
-    def __str__(self):
-        return f'preset={self.preset}, stack_size={self.stack_size}, initial_memory={self.initial_memory}, maximum_memory={self.maximum_memory}, extra_compile_args={self.extra_compile_args}, keep_js={self.keep_js}, target={self.target}'

@@ -131,8 +131,9 @@ def main():
 
     cmd.extend(['-I', quote('/opt')])
     # cmd.extend(['-L/opt', '-l:libvlad_rusty.a'])
-    cmd.extend(['-L/opt/vlad_rusty/target/wasm32-unknown-unknown/release', '-l:libvlad_rusty.a'])
+    # cmd.extend(['-L/opt/vlad_rusty/target/wasm32-unknown-unknown/release', '-l:libvlad_rusty.a'])
     # cmd.extend(['-L/opt/vlad_rusty/target/wasm32-unknown-emscripten/release', '-l:libvlad_rusty.a'])
+    cmd.extend(['-L/opt/vlad_rusty/target/wasm64-unknown-unknown/release', '-l:libvlad_rusty.a'])
     # cmd.extend(['-L/opt', '-l:libdidkit_wasm.a'])
     
 
